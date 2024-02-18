@@ -9,7 +9,7 @@ import pymongo
 from rich.progress import track
 
 from utils.config import mongodb_cli
-from utils.diff import Diff, DiffType
+from utils.diff import Diff, DiffType, DiffTypeName
 from utils.log import logger
 
 # from utils import bytes2str
@@ -25,13 +25,22 @@ def get_args():
 
     parser.add_argument("-t", "--target", type=str, help="target host")
     parser.add_argument("-f", "--field", type=str, help="field to be compared")
-    parser.add_argument("--type", type=int, help="type of difference (0-6)")
+    parser.add_argument(
+        "--type",
+        type=str,
+        help=f"type of difference (0-6 / {', '.join(DiffTypeName)})",
+    )
     parser.add_argument("--quite", action="store_true", default=False, help="quite mode")
 
     args = parser.parse_args()
-    if args.type is not None and not (0 <= args.type <= 6):
-        parser.print_help()
-        exit()
+    if args.type is not None:
+        if args.type.isdigit() and 0 <= int(args.type) <= 6:
+            args.type = int(args.type)
+        elif args.type in DiffTypeName:
+            args.type = DiffType[args.type].value
+        else:
+            parser.print_help()
+            exit()
 
     return args
 
@@ -106,5 +115,5 @@ if __name__ == "__main__":
                 _value.add(x.before)
         if len(_value) == 1:
             print(f"Overwrite: {_value.pop()}")
-        else:
-            print(_value)
+        # else:
+        #     print(_value)

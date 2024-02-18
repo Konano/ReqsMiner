@@ -22,6 +22,9 @@ class DiffType(IntEnum):
     ReduceRows = 6
 
 
+DiffTypeName = list(DiffType.__members__.keys())
+
+
 class Diff(object):
     def __init__(self, type, field, before=None, after=None, token="", host="") -> None:
         self.type = type
