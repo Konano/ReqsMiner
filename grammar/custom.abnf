@@ -1,0 +1,469 @@
+start = http-request
+http-request = request-line CRLF headers-field CRLF ( message-body / chunked-body )
+
+request-target = "__URL__" ["." filename-ext]
+
+filename-ext = 1*alphanum / filename-ext-typical / filename-ext-other
+filename-ext-typical = 1*token
+filename-ext-other = 1*token
+
+headers-field = *(header-field CRLF) [host-header CRLF] *(header-field CRLF)
+header-field = field-line / rfc-header / custom-header
+host-header = "Host" COLON OWS "__HOST__" OWS
+
+field-content = field-vchar [ 1*( SP / HTAB / field-vchar ) field-vchar ] / "__RANDOM__"
+
+uri-host = "__HOST__" / "__RANDOM__"
+
+message-body = *OCTET / "" / "__MESSAGE_BODY__"
+
+mailbox = "__RANDOM__"
+
+; ======================================== rfc headers
+
+rfc-header = accept / accept-charset / accept-encoding / accept-language / accept-ranges
+ / allow / authentication-info / authorization / cache-control / connection
+ / content-encoding / content-language / content-length / content-location / content-range
+ / content-type / date / etag / expect / from / host / if-match / if-modified-since
+ / if-none-match / if-range / if-unmodified-since / last-modified / location / max-forwards
+ / proxy-authenticate / proxy-authentication-info / proxy-authorization / range / referer
+ / retry-after / server / te / trailer / transfer-encoding / upgrade / user-agent / vary
+ / via / www-authenticate
+
+accept = "Accept" COLON OWS accept-values OWS
+accept-values = [media-range [weight] *(OWS "," OWS media-range [weight])]
+media-range = "*/*" / type "/*" / type "/" subtype parameters / MEDIA
+
+accept-charset = "Accept-Charset" COLON OWS accept-charset-values OWS
+accept-charset-values = [CHARSET / "*" [weight] *(OWS "," OWS CHARSET / "*" [weight])]
+
+accept-encoding = "Accept-Encoding" COLON OWS accept-encoding-values OWS
+accept-encoding-values = [codings [weight] *(OWS "," OWS codings [weight])]
+codings = content-coding / "identity" / "*"
+content-coding = token / ENCODED
+
+accept-language = "Accept-Language" COLON OWS accept-language-values OWS
+accept-language-values = [language-range [weight] *(OWS "," OWS language-range [weight])]
+
+accept-ranges = "Accept-Ranges" COLON OWS accept-ranges-values OWS
+accept-ranges-values = acceptable-ranges
+
+allow = "Allow" COLON OWS allow-values OWS
+allow-values = [method *(OWS "," OWS method)]
+
+authentication-info = "Authentication-Info" COLON OWS authentication-info-values OWS
+authentication-info-values = Authentication-Info
+
+authorization = "Authorization" COLON OWS authorization-values OWS
+authorization-values = credentials
+
+cache-control = "Cache-Control" COLON OWS cache-control-values OWS
+cache-control-values = [ cache-directive *( OWS "," OWS cache-directive ) ]
+cache-directive = token [ "=" ( token / quoted-string ) ]
+ / ("max-age" / "s-maxage") ["=" cache-control-number]
+ / "max-stale" ["=" cache-control-number]
+ / "min-fresh" ["=" cache-control-number]
+ / "no-cache"
+ / "no-store"
+ / "no-transform"
+ / "only-if-cached"
+ / "stale-while-revalidate"
+ / "stale-if-error"
+ / "public"
+ / "proxy-revalidate"
+ / "private"
+ / "must-revalidate"
+ / "immutable"
+cache-control-number = number
+
+connection = "Connection" COLON OWS connection-values OWS
+connection-values = [connection-option *(OWS "," OWS connection-option)]
+
+content-encoding = "Content-Encoding" COLON OWS content-encoding-values OWS
+content-encoding-values = [content-coding *(OWS "," OWS content-coding)]
+
+content-language = "Content-Language" COLON OWS content-language-values OWS
+content-language-values = [language-tag *(OWS "," OWS language-tag)]
+
+content-length = "Content-Length" COLON OWS content-length-values OWS
+content-length-values = 1*DIGIT
+
+content-location = "Content-Location" COLON OWS content-location-values OWS
+content-location-values = absolute-URI / partial-URI
+
+content-range = "Content-Range" COLON OWS content-range-values OWS
+content-range-values = Content-Range
+
+content-type = "Content-Type" COLON OWS content-type-values OWS
+content-type-values = media-type
+media-type = MEDIA
+
+date = "Date" COLON OWS date-value OWS
+date-value = HTTP-date
+
+etag = "ETag" COLON OWS etag-values OWS
+etag-values = ETag
+
+expect = "Expect" COLON OWS expect-values OWS
+expect-values = [expectation *(OWS "," OWS expectation)]
+expectation = expectation-type ["=" token / quoted-string parameters]
+expectation-type = token / "100-continue"
+
+from = "From" COLON OWS from-values OWS
+from-values = From
+
+host = "Host" COLON OWS host-values OWS
+host-values = Host
+
+if-match = "If-Match" COLON OWS if-match-values OWS
+if-match-values = "*" / [entity-tag *(OWS "," OWS entity-tag)]
+
+if-modified-since = "If-Modified-Since" COLON OWS if-modified-since-values OWS
+if-modified-since-values = HTTP-date
+
+if-none-match = "If-None-Match" COLON OWS if-none-match-values OWS
+if-none-match-values = "*" / [entity-tag *(OWS "," OWS entity-tag)]
+
+if-range = "If-Range" COLON OWS if-range-values OWS
+if-range-values = entity-tag / HTTP-date
+
+if-unmodified-since = "If-Unmodified-Since" COLON OWS if-unmodified-since-values OWS
+if-unmodified-since-values = HTTP-date
+
+last-modified = "Last-Modified" COLON OWS last-modified-values OWS
+last-modified-values = Last-Modified
+
+location = "Location" COLON OWS location-values OWS
+location-values = Location
+
+max-forwards = "Max-Forwards" COLON OWS max-forwards-values OWS
+max-forwards-values = number
+
+proxy-authenticate = "Proxy-Authenticate" COLON OWS proxy-authenticate-values OWS
+proxy-authenticate-values = Proxy-Authenticate
+
+proxy-authentication-info = "Proxy-Authentication-Info" COLON OWS proxy-authentication-info-values OWS
+proxy-authentication-info-values = Proxy-Authentication-Info
+
+proxy-authorization = "Proxy-Authorization" COLON OWS proxy-authorization-values OWS
+proxy-authorization-values = credentials
+
+range = "Range" COLON OWS range-values OWS
+range-values = ranges-specifier
+
+referer = "Referer" COLON OWS referer-values OWS
+referer-values = absolute-URI / partial-URI
+
+retry-after = "Retry-After" COLON OWS retry-after-values OWS
+retry-after-values = Retry-After
+
+server = "Server" COLON OWS server-values OWS
+server-values = Server
+
+te = "TE" COLON OWS te-values OWS
+te-values = [t-codings *(OWS "," OWS t-codings)]
+t-codings = "trailers" / transfer-coding [weight] / ENCODED
+
+trailer = "Trailer" COLON OWS trailer-values OWS
+trailer-values = [field-name *(OWS "," OWS field-name)] / "Expires"
+field-name = token / HEADER
+
+transfer-encoding = "Transfer-Encoding" COLON OWS transfer-encoding-value OWS
+transfer-encoding-value = [ transfer-coding *( OWS "," OWS transfer-coding ) ]
+
+upgrade = "Upgrade" COLON OWS upgrade-values OWS
+upgrade-values = [protocol *(OWS "," OWS protocol)]
+
+user-agent = "User-Agent" COLON OWS user-agent-values OWS
+user-agent-values = product *(RWS product / comment) / UA
+
+vary = "Vary" COLON OWS vary-values OWS
+vary-values = Vary
+
+via = "Via" COLON OWS via-values OWS
+via-values = [received-protocol RWS received-by [RWS comment] *(OWS "," OWS received-protocol RWS received-by [RWS comment])]
+
+www-authenticate = "WWW-Authenticate" COLON OWS www-authenticate-values OWS
+www-authenticate-values = WWW-Authenticate
+
+; ======================================== custom headers
+
+; https://www.iana.org/assignments/http-fields/http-fields.xhtml
+
+custom-header = a-im / accept-datetime / access-control-request-headers / access-control-request-method / age
+ / alpn / alt-used / caldav-timezones / cdn-loop / content-md5 / cookie / depth / destination / dnt
+ / early-data / expires / forwarded / front-end-https / http2-settings / if / if-schedule-tag-match
+ / link / keep-alive / mime-version / odata-isolation / odata-maxversion / odata-version / ordering-type
+ / origin / oscore / overwrite / position / pragma / prefer / proxy-connection / save-data
+ / schedule-reply / sec-token-binding / sec-websocket-accept / sec-websocket-extensions / sec-websocket-key
+ / sec-websocket-protocol / sec-websocket-version / slug / timeout / topic / ttl / urgency
+ / upgrade-insecure-requests / warning / x-att-deviceid / x-correlation-id / x-csrf-token / x-forwarded-for
+ / x-forwarded-host / x-forwarded-proto / x-http-method-override / x-request-id / x-requested-with / x-uidh
+ / x-wap-profile
+
+a-im = "A-IM" COLON OWS a-im-values OWS
+a-im-values = *("," OWS) a-im-value *(OWS "," [OWS a-im-value])
+a-im-value = token / "vcdiff" / "diffe" / "gzip"
+
+accept-datetime = "Accept-Datetime" COLON OWS accept-datetime-values OWS
+accept-datetime-values = HTTP-date
+
+access-control-request-headers = "Access-Control-Request-Headers" COLON OWS access-control-request-headers-values OWS
+access-control-request-headers-values = *("," OWS) HEADER *(OWS "," [OWS HEADER])
+
+access-control-request-method = "Access-Control-Request-Method" COLON OWS method OWS
+
+age = "Age" COLON OWS delta-seconds OWS
+
+; https://www.rfc-editor.org/rfc/rfc7639.html#section-2.2
+
+alpn = "ALPN" COLON OWS protocol-ids OWS
+protocol-ids = protocol-id *(COMMA protocol-id)
+protocol-id = "http%2F1.1" / "h2"
+
+alt-used = "Alt-Used" COLON OWS alt-used-values OWS
+alt-used-values = token / DOMAIN
+
+caldav-timezones = "CalDav-Timezones" COLON OWS BOOLEAN OWS
+
+; https://www.rfc-editor.org/rfc/rfc8586.html#section-2
+
+cdn-loop = "CDN-Loop" COLON OWS cdn-infos OWS
+cdn-infos = [cdn-info *(OWS "," OWS cdn-info)]
+cdn-info = cdn-id *( OWS ";" OWS parameter )
+cdn-id = ( host [ ":" port ] ) / token
+
+content-md5 = "Content-MD5" COLON OWS content-md5-value OWS
+content-md5-value = TOKEN64
+
+; https://www.rfc-editor.org/rfc/rfc6265.html#section-4.2.1
+
+cookie = "Cookie" COLON OWS cookie-string OWS
+cookie-string = cookie-pair *( ";" SP cookie-pair )
+cookie-pair = cookie-name "=" cookie-value
+cookie-name = token
+cookie-value = *cookie-text / ( DQUOTE *cookie-text DQUOTE )
+cookie-text = %x21 / %x23-2B / %x2D-3A / %x3C-5B / %x5D-7E
+
+depth = "Depth" COLON OWS depth-value OWS
+depth-value = number / "0" / "1" / "infinity"
+
+destination = "Destination" COLON OWS simple-ref OWS
+simple-ref = absolute-URI / ( path-absolute [ "?" query ] )
+
+dnt = "DNT" COLON OWS BOOLEAN-01 OWS
+
+early-data = "Early-Data" COLON OWS "1" OWS
+
+expires = "Expires" COLON OWS date-value OWS
+
+forwarded = "Forwarded" COLON OWS forwarded-values OWS
+forwarded-values = *("," OWS) forwarded-value *(OWS "," [OWS forwarded-value])
+forwarded-value = ("by" / "for" / "host" / "proto") EQUALS (absolute-URI / 1*token)
+
+front-end-https = "Front-End-Https" COLON OWS BOOLEAN-SWITCH OWS
+
+http2-settings = "HTTP2-Settings" COLON OWS http2-settings-value OWS
+http2-settings-value = TOKEN64 / "YWxhZGRpbjpvcGVuc2VzYW1l"
+
+if = "If" COLON OWS ( 1*no-tag-list / 1*tagged-list ) OWS
+no-tag-list = conditions-list
+tagged-list = resource-tag 1*conditions-list
+conditions-list = "(" 1*condition ")"
+condition = ["Not"] (state-token / "[" entity-tag "]")
+state-token = coded-url
+resource-tag = "<" simple-ref ">"
+coded-url = "<" absolute-URI ">"
+
+if-schedule-tag-match = "If-Schedule-Tag-Match" COLON OWS entity-tag OWS
+
+link = "Link" COLON OWS link-value OWS
+link-value = "<" URI-reference ">" *( OWS ";" OWS link-param )
+link-param = token BWS [ "=" BWS ( token / quoted-string ) ]
+
+; https://www.rfc-editor.org/rfc/rfc2068#section-19.7.1.1
+
+keep-alive = "Keep-Alive" COLON OWS keep-alive-values OWS
+keep-alive-values = [ keep-alive-param *( OWS "," OWS keep-alive-param ) ]
+keep-alive-param = keep-alive-param-name "=" keep-alive-param-value
+keep-alive-param-name = token
+keep-alive-param-value = token / number
+
+mime-version = "MIME-Version" COLON OWS mime-version-value OWS
+mime-version-value = 1*DIGIT "." 1*DIGIT
+
+odata-isolation = "OData-Isolation" COLON OWS odata-isolation-value OWS
+odata-isolation-value = token
+
+odata-maxversion = "OData-MaxVersion" COLON OWS odata-version-value OWS
+odata-version = "OData-Version" COLON OWS odata-version-value OWS
+odata-version-value = 1*DIGIT "." 1*DIGIT
+
+ordering-type = "Ordering-Type" COLON OWS ordering-type-value OWS
+ordering-type-value = token
+
+origin = "Origin" COLON OWS ( "null" / origin-list ) OWS
+origin-list = serialized-origin *( SP serialized-origin )
+serialized-origin = scheme "://" host [ ":" port ]
+
+oscore = "OSCORE" COLON OWS oscore-value OWS
+oscore-value = 2*base64url-char
+base64url-char = ALPHA / DIGIT / "-" / "_"
+
+overwrite = "Overwrite" COLON OWS BOOLEAN OWS
+
+position = "Position" COLON OWS position-value OWS
+position-value = "first" / "last" / "after example.html"
+
+pragma = "Pragma" COLON OWS pragma-values OWS
+pragma-values = *( "," OWS ) pragma-directive *( OWS "," [ OWS pragma-directive ] )
+pragma-directive = "no-cache" / extension-pragma
+extension-pragma = token [ "=" ( token / quoted-string ) ]
+
+; https://www.rfc-editor.org/rfc/rfc7240.html#section-2
+
+prefer = "Prefer" COLON OWS 1*preference OWS
+preference = prefer-parameter *( OWS ";" [ OWS prefer-parameter ] )
+prefer-parameter = token [ BWS "=" BWS WORD ]
+
+proxy-connection = "Proxy-Connection" COLON OWS proxy-connection-value OWS
+proxy-connection-value = "keep-alive" / "close" / "upgrade"
+
+save-data = "Save-Data" COLON OWS BOOLEAN-SWITCH OWS
+
+schedule-reply = "Schedule-Reply" COLON OWS BOOLEAN OWS
+
+sec-token-binding = "Sec-Token-Binding" COLON OWS sec-token-binding-value OWS
+sec-token-binding-value = base64-value-non-empty
+
+sec-websocket-accept = "Sec-Websocket-Accept" COLON OWS sec-websocket-accept-value OWS
+sec-websocket-accept-value = base64-value-non-empty
+
+sec-websocket-extensions = "Sec-Websocket-Extensions" COLON OWS sec-websocket-extensions-values OWS
+sec-websocket-extensions-values = sec-websocket-extensions-value *(COMMA sec-websocket-extensions-value)
+sec-websocket-extensions-value = "deflate-stream" / "mux" / "max-channels:4; flow-control"
+
+sec-websocket-key = "Sec-Websocket-Key" COLON OWS sec-websocket-key-value OWS 
+sec-websocket-key-value = base64-value-non-empty
+
+sec-websocket-protocol = "Sec-Websocket-Protocol" COLON OWS sec-websocket-protocol-values OWS 
+sec-websocket-protocol-values = sec-websocket-protocol-value *(COMMA sec-websocket-protocol-value)
+sec-websocket-protocol-value = "chat" / "superchat"
+
+sec-websocket-version = "Sec-Websocket-Version" COLON OWS sec-websocket-version-value OWS 
+sec-websocket-version-value = DIGIT / NZDIGIT DIGIT / "1" DIGIT DIGIT / "2" DIGIT DIGIT
+
+slug = "Slug" COLON OWS slug-value OWS
+slug-value = *slug-text
+; slug-text = %x20-7E / LWS
+slug-text = %x20-7E
+
+timeout = "Timeout" COLON OWS timeout-value OWS
+timeout-value = ("Second-" dav-timeout-val / "Infinite")
+dav-timeout-val = number
+
+topic = "Topic" COLON OWS topic-value OWS
+topic-value = "upd"
+
+ttl = "TTL" COLON OWS ttl-value OWS
+ttl-value = number
+
+urgency = "Urgency" COLON OWS urgency-value OWS 
+urgency-value = "very-low" / "low" / "normal" / "high"
+
+upgrade-insecure-requests = "Upgrade-Insecure-Requests" COLON OWS "1" OWS
+
+warning = "Warning" COLON OWS warning-value OWS
+warning-value = token
+
+x-att-deviceid = "X-ATT-DeviceId" COLON OWS x-att-deviceid-value OWS
+x-att-deviceid-value = "MakeModel/Firmware" / "GT-P7320/P7320XXLPG"
+
+x-correlation-id = "X-Correlation-ID" COLON OWS x-correlation-id-value OWS
+x-correlation-id-value = UUID
+
+x-csrf-token = "X-Csrf-Token" COLON OWS x-csrf-token-value OWS
+x-csrf-token-value = "i8XNjC4b8KVok4uw5RftR38Wgp2BFwql"
+
+x-forwarded-for = "X-Forwarded-For" COLON OWS x-forwarded-for-values OWS
+x-forwarded-for-values = *("," OWS) x-forwarded-for-value *(OWS "," [OWS x-forwarded-for-value])
+x-forwarded-for-value = IP
+
+x-forwarded-host = "X-Forwarded-Host" COLON OWS x-forwarded-host-value OWS
+x-forwarded-host-value = DOMAIN
+
+x-forwarded-proto = "X-Forwarded-Proto" COLON OWS x-forwarded-proto-value OWS
+x-forwarded-proto-value = protocol-name
+
+x-http-method-override = "X-HTTP-Method-Override" COLON OWS method OWS
+
+x-request-id = "X-Request-ID" COLON OWS x-request-id-value OWS
+x-request-id-value = UUID
+
+x-requested-with = "X-Requested-With" COLON OWS x-requested-with-value OWS
+x-requested-with-value = "XMLHttpRequest"
+
+x-uidh = "X-UIDH" COLON OWS x-uidh-value OWS
+x-uidh-value = "PLAY-ACTIVE-ACCOUNT=1"
+
+x-wap-profile = "X-Wap-Profile" COLON OWS x-wap-profile-value OWS
+x-wap-profile-value = "http://wap.samsungmobile.com/uaprof/SGH-I777.xml"
+
+; ======================================== custom constant
+
+method = token / "GET" / method-http10 / method-http11 / method-webdav / method-other
+method-http10 = token
+method-http11 = token
+method-webdav = token
+method-other = token
+
+number = 1*DIGIT
+
+base64-value-non-empty = 1*base64-data [ base64-padding ] / base64-padding
+base64-data            = 4base64-character
+base64-padding         = 2base64-character "==" / 3base64-character "="
+base64-character       = ALPHA / DIGIT / "+" / "/"
+
+IP = IP-literal / IPv4address
+
+; CRLF = "\r\n"
+; SP = " "
+; FS = "/"
+COMMA = ","
+COLON = ":"
+; SEMICOLON = ";"
+; SPACE = " "
+; START-TAG = "<"
+; END-TAG = ">"
+; START-PARENTHESIS = "("
+; END-PARENTHESIS = ")"
+EQUALS = "="
+; HTAB = "\t"
+; DQUOTE = "\""
+
+LWS = [ CRLF ] 1*( SP / HTAB )
+WORD = 1*ALPHA
+
+NZDIGIT = %x31-39
+TOKEN64 = 1*( ALPHA / DIGIT / "+" / "/" ) *"="
+; TOKEN68 = 1*( ALPHA / DIGIT / "-" / "." / "_" / "~" / "+" / "/" ) *"="
+UUID = UUID-L / UUID-U
+UUID-L = 8HEXDIG-L "-" 4HEXDIG-L "-" 4HEXDIG-L "-" 4HEXDIG-L "-" 12HEXDIG-L
+UUID-U = 8HEXDIG-U "-" 4HEXDIG-U "-" 4HEXDIG-U "-" 4HEXDIG-U "-" 12HEXDIG-U
+HEXDIG-L = %x30-39 / %x41-46
+HEXDIG-U = %x30-39 / %x61-66
+
+BOOLEAN = "T" / "F"
+BOOLEAN-01 = "0" / "1" 
+BOOLEAN-SWITCH = "on" / "off"
+
+HEADER = token / CDN-HEADER
+CDN-HEADER = token
+
+DOMAIN = token
+ENCODED = token
+CHARSET = token
+MEDIA = token "/" token
+UA = token
+
+; ======================================== END

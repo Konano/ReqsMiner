@@ -1,0 +1,6 @@
+lark~=1.0.0
+# colorlog~=6.6.0
+pymongo~=4.6.1
+rich~=13.7.0
+numpy~=1.26.4
+# icecream~=2.1.3

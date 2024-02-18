@@ -1,0 +1,39 @@
+// VERSION 1.1
+
+%import common.DIGIT
+%import common.LETTER
+
+start: http_request
+http_request: request_line CRLF ( field_line CRLF )* CRLF message_body
+
+request_line: METHOD SP REQUEST_TARGET SP HTTP_VERSION
+METHOD: TOKEN
+REQUEST_TARGET: VCHAR+
+HTTP_VERSION: "HTTP" FS DIGIT "." DIGIT
+
+field_line: FIELD_NAME ":" ows field_value ows
+FIELD_NAME: TOKEN
+field_value: FIELD_CONTENT*
+FIELD_CONTENT: FIELD_VCHAR [ ( SP | HTAB | FIELD_VCHAR )+ FIELD_VCHAR ]
+FIELD_VCHAR: VCHAR | OBS_TEXT
+
+message_body: OCTET*
+
+
+TOKEN: TCHAR+
+OBS_TEXT: OCHAR
+ows: (SP | HTAB)*
+
+CRLF: "\r\n"
+SP: " "
+FS: "/"
+DFS: "//"
+QM: "?"
+COMMA: ","
+COLON: ":"
+HTAB: "\t"
+AT: "@"
+OCTET: "\x00".."\xff"
+VCHAR: "\x21".."\x7e"
+OCHAR: "\x80".."\xff"
+TCHAR: "!" | "#" | "$" | "%" | "&" | "'" | "*" | "+" | "-" | "." | "^" | "_" | "`" | "|" | "~" | DIGIT | LETTER

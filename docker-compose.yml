@@ -1,0 +1,15 @@
+version: "3"
+services:
+  db:
+    image: mongo:latest
+    container_name: ReqsMiner_db
+    volumes:
+      - ./mongo/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./mongo/mongo-volume:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=reqs-miner
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=pam8x2jAFTPUoFGfywEB
+    ports:
+      - "2777:27017"
+    restart: unless-stopped

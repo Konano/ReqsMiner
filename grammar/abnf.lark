@@ -1,0 +1,44 @@
+%import common.ESCAPED_STRING
+%import common.LETTER
+%import common.DIGIT
+%import common.WS_INLINE
+
+NEW_LINE: "\n "
+%ignore NEW_LINE
+SPACE_INLINE: " "
+%ignore SPACE_INLINE
+COMMENT: ";" /[^\n]/*
+%ignore COMMENT
+
+start: (rule | "\n") +
+rule: TOKEN "=" clause "\n"
+
+clause: clause_or
+clause_or: clause_and ( "/" clause_and )*
+clause_and: ( item | brackets_set | values )+
+
+brackets_set: brackets | brackets_01 | brackets_0n | brackets_xy | brackets_xn | brackets_0x | brackets_xx
+brackets: "(" clause ")"
+brackets_01: "[" clause "]"
+brackets_0n: "*(" clause ")" | "*" item
+brackets_xy: min "*" max "(" clause ")"  | min "*" max item
+brackets_xn: min "*" "(" clause ")"  | min "*" item
+brackets_0x: "*" max "(" clause ")"  | "*" max item
+brackets_xx: limit "(" clause ")"  | limit item
+
+min: NUMBER
+max: NUMBER
+limit: NUMBER
+
+values: values_hex | values_range_hex | values_dec | values_range_dec
+values_hex: "%x" HEX HEX ( "." HEX HEX )*
+values_range_hex: "%x" HEX HEX "-" HEX HEX
+values_dec: "%d" NUMBER ( "." NUMBER )*
+values_range_dec: "%d" NUMBER "-" NUMBER
+
+item: TOKEN | STRING
+
+HEX: ( DIGIT | "A" | "B" | "C" | "D" | "E" | "F" )
+NUMBER: DIGIT+
+TOKEN: LETTER ( LETTER | DIGIT | "-" )+
+STRING: ESCAPED_STRING
