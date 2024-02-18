@@ -30,7 +30,7 @@ def get_args():
         type=str,
         help=f"type of difference (0-6 / {', '.join(DiffTypeName)})",
     )
-    parser.add_argument("--quite", action="store_true", default=False, help="quite mode")
+    parser.add_argument("--quiet", action="store_true", default=False, help="quiet mode")
 
     args = parser.parse_args()
     if args.type is not None:
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     HOST = args.target
     FIELD = args.field
     TYPE = args.type
-    QUITE = args.quite
+    QUIET = args.quiet
 
     filter = {}
     HOST is not None and filter.update({"host": HOST})
@@ -60,7 +60,7 @@ if __name__ == "__main__":
 
     diffs = set()
     total = db_diff.count_documents(filter)
-    if QUITE:
+    if QUIET:
         for x in db_diff.find(filter):
             diffs.add(
                 Diff(
@@ -88,7 +88,7 @@ if __name__ == "__main__":
 
     if FIELD is None and TYPE is None:
         field_type = {}
-        if QUITE:
+        if QUIET:
             for d in diffs:
                 field_type[d.field] = field_type.get(d.field, 0) | (1 << d.type)
         else:
