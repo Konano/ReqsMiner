@@ -3,6 +3,8 @@
 *ReqsMiner* is an innovative fuzzing framework developed to discover previously unexamined inconsistencies in CDN forwarding requests.
 The framework uses techniques derived from reinforcement learning to generate valid test cases, even with minimal feedback, and incorporates real field values into the grammar-based fuzzer.
 
+> README is in progress...
+
 <p align="center">
 <kbd>
 <img src="img/architecture.png" max-height="300">
