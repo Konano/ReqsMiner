@@ -1,6 +1,6 @@
 db.createUser(
     {
-        user: 'nano',
+        user: 'user',
         pwd: 'sjz9TGQp7khx1D0FLtvV',
         roles: [
             {

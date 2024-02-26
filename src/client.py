@@ -229,7 +229,7 @@ if __name__ == "__main__":
                         pickle.dump(t.selector.history, f)
                     with open(f"{OUTPUT_DIR}/output", "a") as f:
                         f.write(f"{succ_num / ROUND_SIZE}, {history_total}\n")
-                    progress.print(f"{round_num+1}: {succ_num}/{ROUND_SIZE} {history_total}")
+                    progress.print(f"Round {round_num+1}: SUCC/ALL = {succ_num}/{ROUND_SIZE}, Explored Grammar Branches = {history_total}")
                     succ_num = 0
                     round_num += 1
                     if round_num == ROUND_NUM:

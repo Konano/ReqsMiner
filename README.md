@@ -3,11 +3,9 @@
 *ReqsMiner* is an innovative fuzzing framework developed to discover previously unexamined inconsistencies in CDN forwarding requests.
 The framework uses techniques derived from reinforcement learning to generate valid test cases, even with minimal feedback, and incorporates real field values into the grammar-based fuzzer.
 
-> README is in progress...
-
 <p align="center">
 <kbd>
-<img src="img/architecture.png" max-height="300">
+<img src="img/architecture.png">
 </kbd>
 <br>The Architecture of ReqsMiner.
 </p>
@@ -17,6 +15,24 @@ The framework uses techniques derived from reinforcement learning to generate va
 ReqsMiner was developed to address the need for a systematic and efficient method to identify forwarding request inconsistencies in Content Delivery Networks (CDNs). Traditional methods of manually discovering these discrepancies may overlook certain variations in forwarding requests, leading to potential security vulnerabilities. 
 
 By automating the process through grammar-based fuzzing with the UCT-Rand algorithm, ReqsMiner can efficiently generate valid test cases and detect differences in CDN forwarding requests with minimal feedback. This tool aims to enhance the security of websites hosted on CDNs by uncovering potential attack vectors, such as DoS attacks, and providing valuable insights to CDN vendors for mitigation.
+
+## How to cite us?
+
+This tool is based on our latest research,"[ReqsMiner: Automated Discovery of CDN Forwarding Request Inconsistencies and DoS Attacks with Grammar-based Fuzzing](https://doi.org/10.14722/ndss.2024.24031)", accepted at [NDSS '24](https://www.ndss-symposium.org/ndss-paper/reqsminer-automated-discovery-of-cdn-forwarding-request-inconsistencies-and-dos-attacks-with-grammar-based-fuzzing/).
+
+If you want to cite us, please use the following (BibTeX) reference:
+
+```bibtex
+@inproceedings{zheng2024reqsminer,
+    year = {2024},
+    author = {Linkai Zheng, Xiang Li, Chuhan Wang, Run Guo, Haixin Duan, Jianjun Chen, Chao Zhang, and Kaiwen Shen},
+    title = {ReqsMiner: Automated Discovery of CDN Forwarding Request Inconsistencies and DoS Attacks with Grammar-based Fuzzing},
+    booktitle = {Proceedings of the 31st Annual Network and Distributed System Security Symposium},
+    doi = {10.14722/ndss.2024.24031},
+    url = {https://www.ndss-symposium.org/ndss-paper/reqsminer-automated-discovery-of-cdn-forwarding-request-inconsistencies-and-dos-attacks-with-grammar-based-fuzzing/},
+    series = {NDSS '24}
+}
+```
 
 ## Installation
 
@@ -47,13 +63,11 @@ pip3 install -r requirements.txt
 
 #### 2. Configure the CDN service
 
-<!-- 
-对于将要测试的 CDN 服务，我们需要将其后端绑定到 origin server 提供的 HTTP 服务上。
-这一步骤根据不同的 CDN 服务提供商有所不同。
-最后得到一个对应该 CDN 服务的域名用于后续测试。
+For the CDN service to be tested, we need to bind the backend to the HTTP service provided by the origin server.
+This step will be different depending on the CDN service provider.
+Finally, we get a domain name corresponding to the CDN service for testing (let's call it `test.cdn.com`).
 
-注意：CDN 和 origin server 中间不要引入类似 Nginx 的反代，因为 Nginx 也会对请求进行修改，会引入一些外部因素导致结果不准。
--->
+Note: Do not have a reverse proxy (e.g. Nginx) between the CDN and the origin server, as the reverse proxy may modify the request and contaminate the results.
 
 #### 3. Configure the database
 
@@ -65,7 +79,19 @@ Run the following command to start the MongoDB service:
 docker-compose up -d
 ```
 
+The default password for root is set in `docker-compose.yml` and for user in `mongo/init-mongo.js`.
+
 #### 4. Configure the client
+
+`client.py` implements the "Request Generator" and "Client" functions of the framework.
+It reads `grammar/http.abnf` to generate an HTTP test request and sends it out on a socket to the CDN's test domain.
+Then, by parsing the response, the client gets the forwarded request and adds it to the database along with the original request.
+Each pair of requests corresponds to a random token.
+
+At the same time, based on the success of the forwarding, the client updates the weights in the ABNF grammar tree, which are used by the UCT-Rand algorithm.
+The weights are stored in `data/{HOST}/selector_history`.
+
+The number of rounds and the number of requests per round can be set via parameters.
 
 | Form          | Description                         |
 | ------------- | ----------------------------------- |
@@ -79,18 +105,22 @@ docker-compose up -d
 
 #### 5. Analyze the results
 
+When the test is finished, use `diff_analy.py` to manually analyze the inconsistencies collected.
+
 | Form         | Description                              |
 | ------------ | ---------------------------------------- |
 | -t, --target | target host                              |
 | -f, --field  | field to be compared                     |
-| --type       | type of difference (0-6 / DiffTypeName)  |
+| --type       | type of difference (0-6 / [DiffTypeName](https://github.com/Konano/ReqsMiner/blob/4cdf21d0682b2fa1eba957b3d6811198d6d76a24/src/utils/diff.py#L15))  |
 | --quiet      | quiet mode                               |
 
-<!-- 可选项？
-1. 修改 ABNF 规则
-准备 `rfc/*.abnf` 和 `predefined.json` 还有 `custom.abnf` 并放到 `grammar/` 目录下
-运行 `python3 src/rule_gen.py`
- -->
+You can also use `print_request.py` to print the original request and forwarded request.
+
+#### 6. Modify ABNF rules
+
+If you want to set your own ABNF rules, you can add, delete and modify `rfc/*.abnf`, `predefined.json` and `custom.abnf`, which are located in the `grammar/` directory.
+
+Once the files are ready, you can run `python3 src/rule_gen.py` to generate `grammar/http.abnf` and then repeat steps 4 and 5 to the new experiment.
 
 ## License
 
