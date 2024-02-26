@@ -10,7 +10,7 @@ from rich.progress import track
 
 from utils.config import mongodb_cli
 from utils.diff import Diff, DiffType, DiffTypeName
-from utils.log import logger
+from utils.log import BANNER, logger
 
 # from utils import bytes2str
 
@@ -57,6 +57,8 @@ if __name__ == "__main__":
     HOST is not None and filter.update({"host": HOST})
     FIELD is not None and filter.update({"field": FIELD})
     TYPE is not None and filter.update({"type": TYPE})
+
+    print(BANNER)
 
     diffs = set()
     total = db_diff.count_documents(filter)

@@ -22,7 +22,7 @@ from rich.progress import Progress
 from utils.config import mongodb_cli
 from utils.diff import diff_analy
 from utils.generator import Tree
-from utils.log import error_handler, logger
+from utils.log import BANNER, error_handler, logger
 
 WORKER_NUM = 100
 
@@ -167,6 +167,8 @@ if __name__ == "__main__":
     PACKET_MAXSIZE = args.packet_maxsize
     MCTS_MODE = not args.random
     VERBOSE = args.verbose
+
+    print(BANNER)
 
     t: Tree = Tree(Path(f"grammar/http.abnf").read_text(), MCTS_MODE)
 

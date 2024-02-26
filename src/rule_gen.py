@@ -8,7 +8,7 @@ from pathlib import Path
 
 from lark import Lark, Token, Tree
 
-from utils.log import logger
+from utils.log import BANNER, logger
 
 parser = Lark(Path("grammar/abnf.lark").read_text(), parser="lalr", debug=True)
 
@@ -90,6 +90,8 @@ def dfs(name: str):
 if __name__ == "__main__":
     rules = {}
     rfc = {}
+
+    print(BANNER)
 
     # ========== read rfc rules ==========
     for file in Path("grammar/rfc").iterdir():

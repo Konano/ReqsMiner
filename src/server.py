@@ -8,7 +8,7 @@ import socket
 import threading
 from base64 import b64encode
 
-from utils.log import logger
+from utils.log import BANNER, logger
 
 
 class WSGIServer(object):
@@ -78,6 +78,8 @@ if __name__ == "__main__":
     SERVER_ADDR = (HOST, PORT) = args.host, args.port
     PACKET_MAXSIZE = args.packet_maxsize
     VERBOSE = args.verbose
+
+    print(BANNER)
 
     try:
         httpd = WSGIServer(SERVER_ADDR)
