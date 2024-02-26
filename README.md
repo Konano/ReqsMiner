@@ -23,7 +23,7 @@ This tool is based on our latest research,"[ReqsMiner: Automated Discovery of CD
 If you want to cite us, please use the following (BibTeX) reference:
 
 ```bibtex
-@inproceedings{zheng2024reqsminer,
+@inproceedings{zheng24reqsminer,
     year = {2024},
     author = {Linkai Zheng, Xiang Li, Chuhan Wang, Run Guo, Haixin Duan, Jianjun Chen, Chao Zhang, and Kaiwen Shen},
     title = {ReqsMiner: Automated Discovery of CDN Forwarding Request Inconsistencies and DoS Attacks with Grammar-based Fuzzing},
