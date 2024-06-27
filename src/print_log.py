@@ -45,6 +45,7 @@ if __name__ == "__main__":
         print_request(token)
         print_response(token)
         print("===================== end =====================")
+        exit()
     try:
         while True:
             token = input("Token: ").strip()
