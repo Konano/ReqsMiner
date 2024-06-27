@@ -84,9 +84,16 @@ def valid(packet: bytes) -> bool:
     if len(request_client) > PACKET_MAXSIZE:
         return False
 
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((HOST, 80))
-    s.send(request_client)
+    while True:
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(SOCKET_FIRST_TIMEOUT)
+            s.connect((HOST, 80))
+            s.send(request_client)
+        except socket.timeout:
+            s.close()
+            continue
+        break
     try:
         response = b""
         s.settimeout(SOCKET_FIRST_TIMEOUT)
