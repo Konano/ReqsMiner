@@ -49,14 +49,15 @@ class BoundThreadPoolExecutor(ThreadPoolExecutor):
         self._work_queue = queue.Queue(16)
 
 
-db = pymongo.MongoClient(mongodb_cli)["reqs-miner"]
+db = pymongo.MongoClient(mongodb_cli)["reqsminer"]
 db_reqs = db["request"]
+db_reps = db["response"]
 db_diff = db["diff"]
 
 
-def placeholder(packet: bytes) -> bytes:
+def placeholder(packet: bytes, token: str) -> bytes:
     # __URL__ and __HOST__
-    packet = packet.replace(b"__URL__", b"/reqsminer/" + urandom(8).hex().encode())
+    packet = packet.replace(b"__URL__", b"/reqsminer/" + token.encode())
     packet = packet.replace(b"__HOST__", HOST.encode())
 
     # __RANDOM__
@@ -66,7 +67,7 @@ def placeholder(packet: bytes) -> bytes:
     # __MESSAGE_BODY__ and __CONTENT_LENGTH__
     msg_len = 0
     if b"__MESSAGE_BODY__" in packet:
-        msg_len = random.randint(1, 16)
+        msg_len = random.randint(1, 512)
         msg = urandom(msg_len)
         packet = packet.replace(b"__MESSAGE_BODY__", msg)
     packet = packet.replace(b"__CONTENT_LENGTH__", str(msg_len).encode())
@@ -80,7 +81,8 @@ def placeholder(packet: bytes) -> bytes:
 
 
 def valid(packet: bytes) -> bool:
-    request_client = placeholder(packet)
+    token = urandom(8).hex()
+    request_client = placeholder(packet, token)
     if len(request_client) > PACKET_MAXSIZE:
         return False
 
@@ -117,7 +119,6 @@ def valid(packet: bytes) -> bool:
         return False
 
     try:
-        token = urandom(8).hex()
         diffs = diff_analy(request_client, request_server)
         if len(diffs):
             db_reqs.insert_one(
@@ -134,6 +135,11 @@ def valid(packet: bytes) -> bool:
                     "invalid_after": True,
                 }
             )
+        db_reps.update_one(
+            {"token": token},
+            {"$set": {"host": HOST, "client": response, "client_len": len(response)}},
+            upsert=True
+        )
         return True
     except Exception as e:
         error_handler(e)

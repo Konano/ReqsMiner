@@ -15,7 +15,7 @@ from utils.log import BANNER, logger
 # from utils import bytes2str
 
 
-db = pymongo.MongoClient(mongodb_cli)["reqs-miner"]
+db = pymongo.MongoClient(mongodb_cli)["reqsminer"]
 db_reqs = db["request"]
 db_diff = db["diff"]
 
@@ -72,6 +72,7 @@ if __name__ == "__main__":
                     x["after"],
                     x["token"],
                     x["host"] if HOST is None else "",
+                    not (FIELD is not None and TYPE is not None)
                 )
             )
     else:
@@ -84,6 +85,7 @@ if __name__ == "__main__":
                     x["after"],
                     x["token"],
                     x["host"] if HOST is None else "",
+                    not (FIELD is not None and TYPE is not None)
                 )
             )
         logger.info(f"{len(diffs) = }")

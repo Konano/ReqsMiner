@@ -114,7 +114,7 @@ When the test is finished, use `diff_analy.py` to manually analyze the inconsist
 | --type       | type of difference (0-6 / [DiffTypeName](https://github.com/Konano/ReqsMiner/blob/4cdf21d0682b2fa1eba957b3d6811198d6d76a24/src/utils/diff.py#L15))  |
 | --quiet      | quiet mode                               |
 
-You can also use `print_request.py` to print the original request and forwarded request.
+You can also use `print_log.py` to print the original request and forwarded request.
 
 #### 6. Modify ABNF rules
 

@@ -26,13 +26,14 @@ DiffTypeName = list(DiffType.__members__.keys())
 
 
 class Diff(object):
-    def __init__(self, type, field, before=None, after=None, token="", host="") -> None:
+    def __init__(self, type, field, before=None, after=None, token="", host="", unique=True) -> None:
         self.type = type
         self.field = field
         self.before = before
         self.after = after
         self.token = token
         self.host = host
+        self.unique = unique
         self.label = {
             DiffType.Retain: "=",
             DiffType.Modify: "*",
@@ -81,7 +82,7 @@ class Diff(object):
 
     def __eq__(self, __o: object) -> bool:
         if isinstance(__o, self.__class__):
-            if self.token:
+            if self.unique:
                 return self.__hash__() == __o.__hash__()
             return self.__dict__ == __o.__dict__
         else:

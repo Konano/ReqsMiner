@@ -1,11 +1,11 @@
 db.createUser(
     {
         user: 'user',
-        pwd: 'sjz9TGQp7khx1D0FLtvV',
+        pwd: 'Pwd_SH0U1D_NO7_bE_Too_W33k',
         roles: [
             {
                 role: 'readWrite',
-                db: 'reqs-miner'
+                db: 'reqsminer'
             }
         ]
     }
@@ -13,5 +13,8 @@ db.createUser(
 
 db.createCollection('request')
 db.request.createIndex({ token: 1 }, { unique: true })
+
+db.createCollection('response')
+db.response.createIndex({ token: 1 }, { unique: true })
 
 db.createCollection('diff')
